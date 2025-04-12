@@ -32,8 +32,5 @@ pip install -r requirements.txt
 
 Ensure your environment is correctly configured to run the project. Set the PYTHONPATH to include the src directory:
 
-export PYTHONPATH=$PYTHONPATH:/afs/cern.ch/user/m/mjalalva/Pileup-Distribution-Estimation-GNN-CMS-LHC/src
-
-
 
 
