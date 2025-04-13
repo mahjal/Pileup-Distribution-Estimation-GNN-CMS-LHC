@@ -2,7 +2,11 @@ import torch.nn.functional as F
 import torch
 from torch_geometric.nn import GraphConv, MLP, global_add_pool, GATv2Conv, LayerNorm, global_mean_pool
 import numpy as np
+from src import SW, HomoDataset, HomoDataReader, BoostedDataLoader, MultibatchTrainer
+import os
+hc = 64
 
+<<<<<<< HEAD
 import sys
 sys.path.append('/home/mahtab/Pileup-Distribution-Estimation-GNN-CMS-LHC/src')  # Absolute path
 
@@ -19,16 +23,26 @@ hc = 64
 #input_directory = '/eos/cms/store/user/hbakhshi/PUGNN/'
 input_directory = '/eos/home-i03/m/mjalalva/Run1/Dec25'
 output_directory = '.'
+=======
+
+input_directory = '/eos/cms/store/user/hbakhshi/PUGNN/'
+output_directory = '/eos/user/m/mjalalva/SWAN_projects/inConc/Folder/Edge_Threshold_02/PUGNN/-VK/jun29/'
+>>>>>>> e7eaa763011efc5023d97060cef2c00e01ed9fab
 
 
 software1 = SW(input_directory, output_directory, name=f'model-{hc}')
 sample_metadata = dict(zip(map(str, list(range(10, 91))), np.ones(81) * 700))
 software1.set_dataset(HomoDataset, sample_metadata, HomoDataReader())
+<<<<<<< HEAD
 software1.set_loader(
     BoostedDataLoader,
     loading_workers=4,
     batch_size=64,
     num_workers=16)
+=======
+software1.set_loader(BoostedDataLoader, loading_workers=4,
+                     batch_size=64, num_workers=16)
+>>>>>>> e7eaa763011efc5023d97060cef2c00e01ed9fab
 
 
 class PUModel(torch.nn.Module):
@@ -38,6 +52,7 @@ class PUModel(torch.nn.Module):
         torch.manual_seed(12345)
         self.num_features = num_features
 
+<<<<<<< HEAD
         self.conv1 = GNN(
             in_channels,
             hidden_channels,
@@ -60,11 +75,28 @@ class PUModel(torch.nn.Module):
                          num_features, 2 *
                          hidden_channels, hidden_channels, hidden_channels //
                          2, out_channels], norm='layer_norm')
+=======
+        self.conv1 = GNN(in_channels, hidden_channels,
+                         edge_dim=1, add_self_loops=False)
+        self.norm1 = LayerNorm(hidden_channels)
+        self.mlp1 = MLP([hidden_channels + num_features, 2 *
+                        hidden_channels, 2*hidden_channels], norm='layer_norm')
+
+        self.conv2 = GNN(hidden_channels, hidden_channels,
+                         edge_dim=1, add_self_loops=False)
+        self.norm2 = LayerNorm(hidden_channels)
+        self.mlp2 = MLP([3*hidden_channels + num_features, 2*hidden_channels,
+                        hidden_channels, hidden_channels//2, out_channels], norm='layer_norm')
+>>>>>>> e7eaa763011efc5023d97060cef2c00e01ed9fab
 
     def forward(self, data):
         x, adj, features, batch = data.x, data.adj_t, torch.reshape(
             data.features, (-1, self.num_features)), data.batch
 
+<<<<<<< HEAD
+=======
+        # 1. Obtain node embeddings
+>>>>>>> e7eaa763011efc5023d97060cef2c00e01ed9fab
         x = self.conv1(x, adj)
         x = self.norm1(x)
         x = x.relu()
@@ -81,6 +113,7 @@ class PUModel(torch.nn.Module):
         return g  
 
 
+<<<<<<< HEAD
 
 model = PUModel(
     in_channels=15,
@@ -88,6 +121,10 @@ model = PUModel(
     num_features=7,
     out_channels=1,
     GNN=GATv2Conv)
+=======
+model = PUModel(in_channels=15, hidden_channels=hc,
+                num_features=7, out_channels=1, GNN=GATv2Conv)
+>>>>>>> e7eaa763011efc5023d97060cef2c00e01ed9fab
 with software1.trainer_scope(MultibatchTrainer, num_batch=5) as pu_trainer:
     pu_trainer.set(model)
     res = pu_trainer.train(
@@ -100,12 +137,17 @@ with software1.trainer_scope(MultibatchTrainer, num_batch=5) as pu_trainer:
         lr_scheduler_args=dict(milestones=[6, 100], gamma=0.05),
     )
 
+<<<<<<< HEAD
 eval_model = PUModel(
     in_channels=15,
     hidden_channels=hc,
     num_features=7,
     out_channels=1,
     GNN=GATv2Conv)
+=======
+eval_model = PUModel(in_channels=15, hidden_channels=hc,
+                     num_features=7, out_channels=1, GNN=GATv2Conv)
+>>>>>>> e7eaa763011efc5023d97060cef2c00e01ed9fab
 with software1.analyzer_scope() as pu_analyzer:
     pu_analyzer(eval_model, res.models, torch.nn.L1Loss())
     model = pu_analyzer.model

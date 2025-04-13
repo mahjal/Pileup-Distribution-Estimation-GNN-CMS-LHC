@@ -1,4 +1,4 @@
-executable              = bashrc.sh
+executable              = setup.sh
 arguments               = $(ClusterId)$(ProcId)
 output                  = model.$(ClusterId).$(ProcId).out
 error                   = model.$(ClusterId).$(ProcId).err

@@ -21,11 +21,13 @@ python -m virtualenv pu-gnn
 source pu-gnn/bin/activate
 
 # Load necessary modules
-module load python/3.8
-module load cuda/11.2
+#module load python/3.8
+#module load cuda/11.2
 
-# Copy project from local directory (update this to your current location if needed)
-cp -r ~/Pileup-Distribution-Estimation-GNN-CMS-LHC/PUGNN/PUGNN .
+# Set the PYTHONPATH
+export PYTHONPATH=$PYTHONPATH:/afs/cern.ch/user/m/mjalalva/Pileup-Distribution-Estimation-GNN-CMS-LHC/src
+
+cp -r ~/Pileup-Distribution-Estimation-GNN-CMS-LHC/src .
 
 # Run training
-python train_gat.py
+python condor_jobs/train_gat.py
