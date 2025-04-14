@@ -10,7 +10,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 from copy import deepcopy
 from collections import namedtuple, OrderedDict
-from tqdm.notebook import trange, tqdm
+#from tqdm.notebook import trange, tqdm
+from tqdm import tqdm
 import os
 import os.path as osp
 import json

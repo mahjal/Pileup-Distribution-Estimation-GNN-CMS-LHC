@@ -3,7 +3,8 @@ from .utils.processing_tools import get_data, to_data, get_batch, edges_threshol
 from .utils.preprocessing_tools import check_and_summarize
 from .utils.postprocessing_tools import llikelihood_pois, max_log_likelihood
 from collections import namedtuple
-from tqdm.notebook import trange, tqdm
+from tqdm import tqdm
+#from tqdm.notebook import trange, tqdm
 
 from torch_geometric.utils import to_undirected, add_self_loops
 import plotly.io as pio
@@ -133,8 +134,8 @@ class BoostedDataLoader(BaseDataloader):
         super().process(dataset_length, test_percentage, validation_percentage, **dataloader_args)
         print('Initializing...', file=sys.stderr)
         for name in ['test', 'train', 'validation']:
-            os.mkdir(osp.join(self._root, name))
-
+            #os.mkdir(osp.join(self._root, name))
+            os.makedirs(osp.join(self._root, name), exist_ok=True)
         with tqdm(total=sum(list(self._num.values()))//self._batch_size, desc=f"loading ...", unit='Batch', disable=self._prog) as pbar1:
             for subset, name in zip([self._test_gen, self._train_gen, self._validation_gen], ['test', 'train', 'validation']):
                 zeros  = len(str(len(subset)))
